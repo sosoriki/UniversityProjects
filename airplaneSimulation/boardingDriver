@@ -1,0 +1,48 @@
+package airplaneSimulation;
+import java.util.*;
+public class boardingDriver {
+	public static void main(String[] args) {
+		priorityQueue pQueue = new priorityQueue(20);
+		priorityQueue pQBoard = new priorityQueue(20);
+		simulateAdd(pQueue, pQBoard);
+		pQBoard.print();
+	}
+	
+	public static void simulateAdd(priorityQueue q, priorityQueue q2) {
+		int time = 0;
+		int passengerNumber = 1;
+		int boardingTime = 0;	//because it takes 20 seconds to board a passenger
+		int passengersAdded = 0;	//to keep track of priority line up
+		while(time < 300) {
+			int coinFlip = (int)(Math.random() * 11 - 1 + 1) + 1;	//used to simulate them coming at random times
+			if(coinFlip % 11 == 0 && passengersAdded < 20) {
+				boardingTime = 1;	//resets boarding time to 0 for next passenger
+				int randomPriority = (int)(Math.random() * 20 - 1 + 1) + 1;
+				q.add(passengerNumber, time, randomPriority, randomPriority);
+				passengerNumber++;
+				boardingTime++;	//starts up boarding time again
+				passengersAdded++;
+			}
+			if(boardingTime % 20 == 0 && !q.isEmpty()) {	//simulates the 20 seconds it takes for someone to get checked in
+				passenger temp = q.remove();
+				q2.add(temp.getPassengerNumber(), temp.getArrivalTime(), temp.getPriority(), temp.getPriority());
+			}
+			else {	//increments time and boarding time
+				time++;
+				boardingTime++;
+			}
+		}
+	}
+	
+	public static void printPassengerQueue(priorityQueue q) {
+		for(int i = 0; i < q.size(); i++) {
+			passenger tempPassenger = q.remove();
+			System.out.printf("Passenger Number: %d\n", tempPassenger.getPassengerNumber());
+			System.out.printf("Passenger Arrival Time: %d\n", tempPassenger.getArrivalTime());
+			System.out.printf("Passenger Boarding Category: %s\n", tempPassenger.getBoardingCategory());
+			System.out.printf("Passenger Priority: %d\n", tempPassenger.getPriority());
+			System.out.printf("\n\n");
+		}
+	}
+
+}
