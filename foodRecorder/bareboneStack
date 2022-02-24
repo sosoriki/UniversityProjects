@@ -1,0 +1,9 @@
+package foodCalorie;
+//interface for the stack
+public interface bareBonesStack <E>{
+	void push(E obj); 	//adds elements onto the stack
+	E pop(); 			//removes elements from the stack
+	E peek();			//returns top element without removing it
+	boolean isEmpty();	//returns true if stack is empty
+
+}
