@@ -1,0 +1,39 @@
+package cfgSimplification;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+public class utility {
+	public static BufferedReader openFile(String filename) 
+	{
+		try 
+		{ 
+			return new BufferedReader(new FileReader(filename)); 
+		}
+		catch (IOException e) { return null; }
+	}
+	
+	public static void closeFile(BufferedReader reader) 
+	{
+		try 
+		{ 
+			reader.close();
+		}
+		catch (IOException e) 
+		{ 
+			
+		} 
+	}
+	
+	public static String readLine(BufferedReader reader) 
+	{
+		try 
+		{ 
+			return reader.readLine(); 
+		} 
+		catch (IOException e) 
+		{ 
+			return null; 
+		}
+	}
+
+}
