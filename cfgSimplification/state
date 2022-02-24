@@ -1,0 +1,37 @@
+package cfgSimplification;
+import java.util.List;
+
+public class state {
+
+	private char nonTerminal;
+	private List<String> list;
+
+	public state(char nonTerminal) {
+		this.nonTerminal = nonTerminal;
+	}
+
+	public char getNonTerminal() {
+		return nonTerminal;
+	}
+
+	public void setNonTerminal(char nonTerminal) {
+		this.nonTerminal = nonTerminal;
+	}
+
+	public List<String> getList() {
+		return list;
+	}
+
+	public void set(List<String> list) {
+		this.list = list;
+	}
+
+	public void remove(String remove){
+		list.remove(remove);
+	}
+
+	public void add(String add) {
+		list.add(add);
+	}
+
+}
