@@ -18,3 +18,6 @@ public class consumer {
         while((c = cBuffer.get()) != 0) {
         	System.out.print(c);
         }
+    }
+
+}
