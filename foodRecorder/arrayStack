@@ -1,0 +1,74 @@
+package foodCalorie;
+
+public class arrayStack <E> implements bareBonesStack <E>{
+	//Storage for the stack (reference holder)
+	private E[] theData;
+	//Variable for top of stack
+	private int topOfStack = -1;
+	private static final int INITIAL_CAPACITY = 5;
+	//Constructors for class
+	public arrayStack(){
+		this.theData = (E[]) new Object[INITIAL_CAPACITY]; //the actual array is created
+	}
+	//Overloaded constructor, where user chooses capacity of stack
+	public arrayStack(int size){
+		this.theData = (E[]) new Object[size];
+	}
+	@Override
+	public void push(E obj) {
+		//First check if there is space to add anything
+		if(topOfStack == this.theData.length - 1){
+			System.out.printf("Stack Overflow\n");
+			return;
+		}
+		//Otherwise, if there is space, insert into the stack
+		else{
+			topOfStack++;
+			this.theData[topOfStack] = obj;
+			/* Can also optionally do this.theData[++topOfStack} = obj; */
+			return;
+		}
+	}
+
+	@Override
+	public E pop() {
+		//This method deletes an element from the stack
+		//first we have to check whether there is an element to delete
+		if(isEmpty()){
+			System.out.printf("Stack Underflow\n");
+			return null;
+		}
+		//Otherwise there is at least one element so we can pop
+		else{
+			return this.theData[topOfStack--];
+		}
+	}
+
+	@Override
+	public E peek() {
+		//This method shows the top of the stack, but doesn't delete the top of the stack
+		//First we have to check whether there is an element to peek
+		if(isEmpty()){
+			System.out.printf("Stack Underflow\n");
+			return null;
+		}
+		//Otherwise we peek at the element
+		else{
+			return this.theData[topOfStack];
+		}
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return(topOfStack == -1);
+	}
+	
+	public String toString(){
+		String str = "Stack:";
+		//Iterate over the elements and add to the string
+		for(int i = 0; i <= topOfStack; i++){
+			str += " " + this.theData[i] + " | ";
+		}
+		return str;
+	}
+}
