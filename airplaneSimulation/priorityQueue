@@ -1,0 +1,85 @@
+package airplaneSimulation;
+
+public class priorityQueue {
+	//class variables
+	private passenger[] heap;
+	private int heapSize;
+	private int capacity;
+	
+	//constructor
+	public priorityQueue(int capacity) {
+		this.capacity = capacity+1;
+		heap = new passenger[this.capacity];
+		heapSize = 0;
+	}
+	
+	//insert method
+	public void add(int passengerNumber, int arrivalTime, int boardingCategory, int priority) {
+		passenger newPassenger = new passenger(passengerNumber, arrivalTime, boardingCategory, priority);
+		heap[++heapSize] = newPassenger;
+		int position = heapSize;
+		while(position != 1 && newPassenger.getPriority() < heap[position/2].getPriority()) {
+			heap[position] = heap[position/2];
+			position /= 2;
+		}
+		heap[position] = newPassenger;
+	}
+	
+	//remove method
+	public passenger remove() {
+		int parent; 
+		int child;
+        passenger item;
+        passenger temp;
+        if (isEmpty() )
+        {
+            System.out.printf("Heap is empty");
+            return null;
+        }
+ 
+        item = heap[1];
+        temp = heap[heapSize--];
+ 
+        parent = 1;
+        child = 2;
+        while (child <= heapSize)
+        {
+            if (child < heapSize && heap[child].getPriority() > heap[child + 1].getPriority()) {
+                child++;
+            }
+            if (temp.getPriority() <= heap[child].getPriority()) {
+                break;
+            }
+            heap[parent] = heap[child];
+            parent = child;
+            child *= 2;
+        }
+        heap[parent] = temp;
+        return item;
+	}
+	
+	//general functions
+	public void clear(){
+	        heap = new passenger[capacity];
+	        heapSize = 0;
+	}
+	  
+	public boolean isEmpty(){
+	        return heapSize == 0;
+	}
+	    
+	public boolean isFull(){
+	        return heapSize == capacity - 1;
+	}
+	    
+	public int size(){
+	        return heapSize;
+	}
+	
+	public void print() {
+    	for(int i = 1; i <= heapSize ; i++) {
+    		System.out.printf("%s\n", heap[i].toString());
+    	}
+	}
+
+}
