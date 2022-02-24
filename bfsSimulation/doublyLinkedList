@@ -1,0 +1,123 @@
+package breadthFirstSearch;
+
+public class doublyLinkedList <E>{
+	node head;
+	node tail;
+	private int n;
+	public void addFirst(E data) {							//add data at the head of the linked list
+		node x = new node(data);							//create new node called x with inputed data
+		x.next = head;										//setting the next node of new node to head
+		x.prev = null;										//setting the previous node of new node to null
+		if (head != null) {									//if there is a head then set the node before the head into the new node x
+			head.prev = x;
+		}
+		head = x;											//set pointer of head to x
+		if(tail == null) {									//if there is no tail, set pointer of the tail to x
+			tail = x;
+		}
+		n++;
+	}
+	
+	public void addAfter(E data, node previousNode) {		//add data at a specified spot in the linked list
+		if(previousNode == null) {
+			return;
+		}
+		node x = new node(data);							//create new node called x with inputed data
+		x.next = previousNode.next;
+		previousNode.next = x;
+		x.prev = previousNode;
+		if(x.next != null) {
+			x.next.prev = x;
+		}
+		n++;
+	}
+	
+	public void addEnd(E data) {							//adds data at the end of the doubly linked list
+		node x = new node(data);							//create new node
+		if(tail != null) {									//if there is a tail, put new node after the tail
+			tail.next = x;
+		}
+		tail = x;											//make the new tail pointer into x
+		if(head == null) {									//if there is no head, set pointer of head to x
+			head = x;
+		}
+		n++;
+	}
+	
+	public int get(int index) {
+		int count = 0;
+		node iterator = head;								//set the iterator to point and start at head
+		while(iterator != null) {							//while there are still stuff to iterate to
+			if(count == index) {							//checks if the count has gotten to the index we were trying to find
+				return (int)iterator.data;					//returns the data that was stored in the iterator as an integer
+			}
+			count++;										//adds more to the count so we can keep checking with index
+			iterator = iterator.next;						//setting iterator to the next node
+		}
+		return -99;											//if doesn't exist it'll return a -99
+	}
+	
+	public int removeFirst() {
+		int temp = (int)head.data;
+		if(head != null) {
+			if(head.next == null) {
+				tail = null;
+				head = null;
+			}
+			else {
+				head.next.prev = null;
+				head = head.next;
+			}
+		}
+		return temp;
+	}
+	
+	public int getSize() {
+		return n;
+	}
+	
+	public boolean isEmpty() {
+		return head == null;								//if head is null, returns true. false otherwise
+	}
+	
+	//methods below were written before trying to implement main, deemed not needed so have no been edited further than it's "bare-bone" state
+	
+	public void remove(node delNode) {						//deletes node where we give it, can be dll.head, dll.head.next, etc.
+		if (head == null || delNode == null) {
+			return;
+		}
+		if (head == delNode) {
+			head = delNode.next;
+		}
+		if (delNode.next != null) {
+			delNode.next.prev = delNode.prev;
+		}
+		if (delNode.prev != null) {
+			delNode.prev.next = delNode.next;
+		}
+		n--;
+		return;
+	}
+	
+	public void removeEnd() {
+	 	if (head == null){
+	 		return;
+	 	}
+		node temp = head;
+		while (temp.next != null) {
+			temp = temp.next;
+		}
+		temp = temp.prev;
+		temp.next = null;
+		n--;
+	}
+	
+	public void print (node Node) {							//prints from where you want it, in this case dll.head is fine (beginning of linked list)
+		node last = null;
+		while(Node != null) {
+			System.out.printf("%d ", Node.data);
+			last = Node;
+			Node = Node.next;
+		}
+	}
+}
