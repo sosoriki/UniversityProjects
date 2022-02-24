@@ -1,0 +1,50 @@
+package foodCalorie;
+
+public class food {
+	private String foodName;
+	private int quanity;
+	private int calories;
+	private int mealType;
+	public food(String foodName, int quanity, int calories, int mealType) {
+		this.foodName = foodName;
+		this.quanity = quanity;
+		this.calories = calories;
+		this.mealType = mealType;
+	}
+	
+	//Mutators
+	public void setFoodName(String foodName) {
+		this.foodName = foodName;
+	}
+	public void setQuanity(int quanity) {
+		this.quanity = quanity;
+	}
+	public void setCalories(int calories) {
+		this.calories = calories;
+	}
+	public void setMealType(int mealType) {
+		this.mealType = mealType;
+	}
+	
+	//Accessors
+	public String getFoodName() {
+		return this.foodName;
+	}
+	public int getQuanity() {
+		return this.quanity;
+	}
+	public int getCalories() {
+		return this.calories;
+	}
+	public int getMealType() {
+		return this.mealType;
+	}
+	
+	//toString
+	public String toString() {
+		String s;
+		s = this.foodName + "quanity of" + this.quanity + "was" + this.calories + "calories" + "eaten at" + this.mealType;
+		return s;
+	}
+
+}
