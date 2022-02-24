@@ -1,0 +1,251 @@
+package cfgSimplification;
+import java.util.ArrayList;
+import java.util.List;
+
+public class simplify {
+
+	private void removeUnitProduction(grammar cfg) {
+
+		ArrayList<String> totalRemoved = new ArrayList<>();
+		ArrayList<String> removedPerState;
+		ArrayList<state> states = (ArrayList<state>) cfg.get();
+
+		for (state state: states) {
+			removedPerState = new ArrayList<>();
+			for (String derivation: state.getList()) {
+				if (derivation.length() == 1 && Character.isUpperCase(derivation.toCharArray()[0])) {
+					totalRemoved.add(derivation);
+					removedPerState.add(derivation);
+				}
+			}
+			if (removedPerState.size() > 0) {
+				for (String toRemove: removedPerState) {
+					state.remove(toRemove);
+
+					for (String derivation: cfg.getStateName(toRemove.toCharArray()[0])
+							.getList()) {
+
+						if (!derivation.equals(toRemove)){
+							state.add(derivation);
+						}
+					}
+				}
+			}
+		}
+
+		cfg.removeEmptyStates();
+	}
+
+	private void removeUselessStates(grammar cfg){
+
+		ArrayList<Character> useless = new ArrayList<>();
+		ArrayList<Character> useful = new ArrayList<>();
+
+		for(state state : cfg.get()){
+			useless.add(state.getNonTerminal());
+		}
+
+		for(Character terminal : cfg.getTerminals()){
+			useful.add(terminal);
+		}
+
+
+		int i=0;
+		boolean holder = true;
+
+		while(holder&&i<10){
+			holder = false;
+			for(state state1 : cfg.get()){
+
+				for(String d : state1.getList()){
+
+					char[] derived = d.toCharArray();
+					int verify = 0;
+
+					for(char x : derived){
+
+						if(useful.contains(x)){
+							verify++;
+						}
+
+					}
+
+					if(verify==d.length())
+					{
+						if(!useful.contains(state1.getNonTerminal())){
+							useful.add(state1.getNonTerminal());
+							int y=useless.indexOf(state1.getNonTerminal());
+							useless.remove(y);
+							holder=true;
+
+						}
+					}
+				}
+			}
+			i++;
+		}
+
+		boolean delete = false;
+		for(state rid : cfg.get()){//
+			ArrayList<String> toRemove = new ArrayList<>();
+
+			for(String der : rid.getList()){//
+				char[] derivation = der.toCharArray();
+				delete=false;
+
+				for(char c : derivation){
+					if(useless.contains(c))
+						delete=true;
+				}
+				if(delete)
+					toRemove.add(der);
+			}
+			rid.getList().removeAll(toRemove);
+
+		}
+
+		ArrayList<state> newStates = new ArrayList<>();
+		
+		for(char productiveState : useful){
+			if(Character.isUpperCase(productiveState))
+
+				for(state check : cfg.get()){
+					if(check.getNonTerminal()==productiveState){
+						newStates.add(check);
+					}
+
+				}
+
+		}
+
+		cfg.set(newStates);
+
+		ArrayList<state> reachable = new ArrayList<state>();
+		reachable.add(cfg.getStartState());
+
+		for (state currentState: cfg.get()) {
+			if (reachable.contains(currentState)) {
+				for (String currentDerivation: currentState.getList()) {
+					char[] splitDerivation = currentDerivation.toCharArray();
+					for (char currentChar: splitDerivation) {
+						if (Character.isUpperCase(currentChar)) {
+							state reachableState = cfg.getStateName(currentChar);
+							if (!(reachable.contains(reachableState))) {
+								reachable.add(reachableState);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		cfg.set(reachable);
+
+		ArrayList<Character> newTerminals = new ArrayList<>();
+		for(state x : cfg.get()){
+			for(String deri : x.getList()){
+
+				char[] derived = deri.toCharArray();
+				for(char l : derived){
+					if(Character.isLowerCase(l) && !newTerminals.contains(l))
+						newTerminals.add(l);
+				}
+			}
+		}
+		cfg.setTerminals(newTerminals);
+	}
+	
+	private void removeEpsilon(grammar cfg) {
+
+		List<state> nulls = new ArrayList<>();
+		ArrayList<state> states = (ArrayList<state>) cfg.get();
+
+		boolean isNull;
+
+		for (state state: states) {
+			isNull = false;
+			for (String derivation: state.getList()) {
+				if (derivation.equals("0")) {
+					isNull = true;
+				}
+			}
+			if (isNull) {
+				nulls.add(state);
+			}
+		}
+
+		boolean newNullAdded;
+
+		ArrayList<state> nonNullStates = (ArrayList<state>) ((ArrayList<state>)cfg.get()).clone();
+		nonNullStates.removeAll(nulls);
+
+		do {
+			newNullAdded = false;
+			int nullCount;
+
+			for (state state: nonNullStates) {
+				for (String derivation: state.getList()) {
+					nullCount = 0;
+
+					char[] splitDerivation = derivation.toCharArray();
+					for (char variable: splitDerivation) {
+
+						for (state nullableState: nulls) {
+							if (nullableState.getNonTerminal() == variable) {
+								nullCount++;
+							}
+						}
+					}
+					if (nullCount == derivation.length()) {
+						nulls.add(state);
+						nonNullStates.remove(state);
+						newNullAdded = true;
+					}
+				}
+			}
+		} while(newNullAdded);
+
+
+		ArrayList<String> derivations;
+		for (state state: states) {
+			derivations = (ArrayList<String>) state.getList();
+			ArrayList<String> add = new ArrayList<>();
+			ArrayList<String> remove = new ArrayList<>();
+
+			for (String derivation: derivations) {
+				for (state nullState: nulls) {
+					if (derivation.contains(((Character)nullState.getNonTerminal()).toString())
+							&& derivation.length() != 1) {
+
+						char[] derivationToChar = derivation.toCharArray();
+						char[] newDerivationToAdd = new char[derivation.length()-1];
+						int index=0;
+						for(char c : derivationToChar){
+							if(c!=nullState.getNonTerminal()){
+								newDerivationToAdd[index]=c;
+								index++;
+
+							}
+						}
+						String newDerivation = new String(newDerivationToAdd);
+						add.add(newDerivation);
+					}
+					else if (derivation.equals("0")) {
+						remove.add(derivation);
+					}
+				}
+			}
+
+			derivations.addAll(add);
+			derivations.removeAll(remove);
+		}
+	}
+
+	public grammar simplify(grammar cfg) {
+		removeEpsilon(cfg);
+		removeUnitProduction(cfg);
+		removeUselessStates(cfg);
+		return cfg;
+	}
+
+}
