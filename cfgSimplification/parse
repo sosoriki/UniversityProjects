@@ -1,0 +1,86 @@
+package cfgSimplification;
+import java.util.ArrayList;
+import java.util.List;
+
+public class parse {
+
+	private grammar parsed;
+
+	public void parseStartState(String start) {
+		parsed.setStartState(parsed.getStateName(start.trim().charAt(0)));
+	}
+	
+	public void parseStates(String newS) {
+
+		String[] split = newS.split(",");
+		List<state> add = new ArrayList<>();
+
+		for (String s: split) {
+			s = s.trim();
+			state newState = new state(s.charAt(0));
+			add.add(newState);
+		}
+
+		parsed.set(add);
+	}
+
+	public void parseTerminals(String t) {
+
+		String[] split = t.split(",");
+		List<Character> addterminals = new ArrayList<>();
+
+		for (String terminal: split) {
+			terminal = terminal.trim();
+			addterminals.add(t.charAt(0));
+		}
+
+		parsed.setTerminals(addterminals);
+	}
+
+	public void parseRules(String rules) {
+
+		state editState = parsed.getStateName(rules.charAt(0));
+		List<String> add = new ArrayList<>();
+		String[] unparsed = rules.split("-")[1].trim().split("\\|");
+
+		for (String d: unparsed) {
+			d = d.trim();
+			add.add(d);
+		}
+
+		editState.set(add);
+	}
+	
+	public grammar parseGrammar(String input) {
+
+		parsed = new grammar();
+
+		boolean init = true;
+
+		String[] current = input.split("\n");
+
+		for(String s:current) {
+			if (init) {
+
+				if (s.startsWith("V:")) {
+					parseStates((s.split(":")[1]).trim());
+				}
+				else if (s.startsWith("T:")) {
+					parseTerminals(s.split(":")[1].trim());
+				}
+				else if (s.startsWith("S:")) {
+					parseStartState(s.split(":")[1].trim());
+				}
+				else if (s.startsWith("P:")) {
+					init = false;
+				}
+			}
+			else {
+				parseRules(s.trim());
+			}
+		}
+
+		return parsed;
+	}
+
+}
