@@ -1,0 +1,101 @@
+package airplaneSimulation;
+
+public class passenger {
+	//class variables
+	private int passengerNumber;
+	private int arrivalTime;
+	private int boardingCategory;
+	private int priority;
+	
+	//default constructor
+	public passenger(int passengerNumber, int arrivalTime, int boardingCategory, int priority) {
+		this.passengerNumber = passengerNumber;
+		this.arrivalTime = arrivalTime;
+		this.boardingCategory = boardingCategory;
+		this.priority = priority;
+	}
+	
+	//mutator methods
+	public void setPassengerNumber(int passengerNumber) {
+		this.passengerNumber = passengerNumber;
+	}
+	
+	public void setArrivalTime(int arrivalTime) {
+		this.arrivalTime = arrivalTime;
+	}
+	
+	public void setBoardingCategory(int boardingCategory) {
+		this.boardingCategory = boardingCategory;
+	}
+	
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+	
+	//accessor methods
+	public int getPassengerNumber() {
+		return this.passengerNumber;
+	}
+	
+	public int getArrivalTime() {
+		return this.arrivalTime;
+	}
+	
+	public String getBoardingCategory() {
+		switch(boardingCategory) {
+		case 1:
+			return "Traveling with Infant";
+		case 2:
+			return "Traveling with Infant";
+		case 3:
+			return "Traveling with Infant";
+		case 4:
+			return "Traveling with Infant";
+		case 5:
+			return "Elderly";
+		case 6:
+			return "Elderly";
+		case 7:
+			return "Elderly";
+		case 8:
+			return "Elderly";
+		case 9:
+			return "Elderly";
+		case 10:
+			return "Armed Services";
+		case 11:
+			return "Armed Services";
+		case 12:
+			return "Armed Services";
+		case 13:
+			return "Armed Services";
+		case 14:
+			return "Armed Services";
+		case 15:
+			return "First Class";
+		case 16:
+			return "First Class";
+		case 17:
+			return "First Class";
+		case 18:
+			return "First Class";
+		case 19:
+			return "First Class";
+		case 20:
+			return "Economy Class";
+		default:
+			return "No boarding category found\n";
+		}
+	}
+	
+	public int getPriority() {
+		return this.priority;
+	}
+	
+	public String toString() {
+		String s;
+		s = "Passenger number: " + passengerNumber + "\n" + "\tArrival Time: " + arrivalTime + " seconds\n" + "\tBoarding Category: " + getBoardingCategory() + "\n" + "\tPriority: " + priority + "\n";
+		return s;
+	}
+
+}
