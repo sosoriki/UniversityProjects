@@ -1,0 +1,288 @@
+package cardGame;
+import java.util.*;
+public class cardGameSimulation {
+	public static void main(String args[]) {
+		singleLinkedList <card> playerOne = new singleLinkedList<>();
+		singleLinkedList <card> playerTwo = new singleLinkedList<>();
+		ArrayList <card> deck = createDeckAndShuffle();
+		dealCards(playerOne, playerTwo, deck);
+		printHand(playerOne, playerTwo);
+		System.out.printf("\n");
+		int result = playMatches(playerOne, playerTwo); //0 = player one wins, 1 = player 2 wins, 2 = tie
+		printWinner(result, playerOne, playerTwo); //For some reason it doesn't put last card in players hand above pile. last card ends up always last
+	}
+	
+	public static ArrayList<card> createDeckAndShuffle() {
+		ArrayList <card> deck = new ArrayList<>();
+		for(int i = 0; i < 4; i++) {
+			deck.add(new card(i, 1));
+			deck.add(new card(i, 2));
+			deck.add(new card(i, 3));
+			deck.add(new card(i, 4));
+			deck.add(new card(i, 5));
+			deck.add(new card(i, 6));
+			deck.add(new card(i, 7));
+			deck.add(new card(i, 8));
+			deck.add(new card(i, 9));
+			deck.add(new card(i, 10));
+			deck.add(new card(i, 11));
+			deck.add(new card(i, 12));
+			deck.add(new card(i, 13));
+		}
+		for(int i = 0; i < deck.size(); i++) { //shuffle method modeled after https://introcs.cs.princeton.edu/java/14array/Deck.java.html
+			//shuffles cards using math.random/random sorting
+			int r = i + (int)(Math.random() * (deck.size()-i));
+			card temp = deck.get(r);
+			deck.set(r, deck.get(i));
+			deck.set(i, temp);
+		}
+		return deck;
+		
+	}
+	
+	public static void dealCards(singleLinkedList<card> one, singleLinkedList<card> two, ArrayList<card> deck) {
+		for(int i = 0; i < deck.size(); i++) {
+			one.add(0, deck.get(i));
+			i++;
+			two.add(0, deck.get(i));
+		}
+		
+	}
+	
+	public static void printHand(singleLinkedList<card> one, singleLinkedList<card> two) {
+		System.out.printf("Player One's hand:\n\n");
+		for(int i = 1; i < one.getSize() + 1; i++) {
+			System.out.printf("%s\n", one.get(i));
+		}
+		System.out.printf("\n");
+		System.out.printf("Player Two's hand:\n\n");
+		for(int i = 1; i < two.getSize() + 1; i++) {
+			System.out.printf("%s\n", two.get(i));
+		}
+	}
+	
+	public static int playMatches(singleLinkedList<card> one, singleLinkedList<card> two) {
+		singleLinkedList <card> pile = new singleLinkedList<>();
+		//must decide who starts the game
+		int first = (int)(Math.random() * 2 + 1);
+		int numberOfMatches = 0;
+		card Card;
+		card Card2;
+		if(first == 1) { //game starts with player 1 going first
+			System.out.printf("Player One goes first!\n\n");
+			System.out.printf("Round: %d\n", numberOfMatches + 1);
+			card firstCard = one.remove(1);
+			System.out.printf("Player One puts down %s\n", firstCard);
+			pile.add(0, firstCard);
+			for(int i = 1; numberOfMatches < 10 || one.getSize() == 0 || two.getSize() == 0; i++) { //plays until 10 rounds played or either players hand hits 0
+				Card2 = two.remove(1);
+				System.out.printf("Player Two puts down %s\n", Card2);
+				if(Card2.getSuit() == pile.get(1).getSuit()) {
+					System.out.printf("Player Two wins round %d\n", numberOfMatches + 1);
+					pile.add(0, Card2);
+					while(pile.getSize() != 0) {
+						two.add(two.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					numberOfMatches++; //increment matches
+					if(numberOfMatches < 10) {
+						System.out.printf("Round: %d\n", numberOfMatches + 1);
+						Card = one.remove(1);
+						System.out.printf("Player One puts down %s\n", Card);
+						pile.add(0, Card);
+						continue;
+					}
+					else {
+						break;
+					}
+				}
+				else {
+					pile.add(0, Card2);
+				}
+				if(two.getSize() == 0) { //checks if Player two has 0 cards, if so puts pile into player one's hand and returns result of player one winning
+					while(pile.getSize() != 0) {
+						one.add(one.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					return 0;
+				}
+				if(one.getSize() == 0) { //checks if Player one has 0 cards, if so puts pile into player two's hand and returns result of player two winning
+					while(pile.getSize() != 0) {
+						two.add(two.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					return 1;
+				}
+				Card = one.remove(1);
+				System.out.printf("Player One puts down %s\n", Card);
+				if(Card.getSuit() == pile.get(1).getSuit()) {
+					System.out.printf("Player One wins round %d\n", numberOfMatches + 1);
+					pile.add(0, Card);
+					while(pile.getSize() != 0) {
+						one.add(one.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					numberOfMatches++; //increment matches
+					if(numberOfMatches < 10) {
+						System.out.printf("Round: %d\n", numberOfMatches + 1);
+						Card = one.remove(1);
+						System.out.printf("Player One puts down %s\n", Card);
+						pile.add(0, Card);
+						continue;
+					}
+					else {
+						break;
+					}
+				}
+				else {
+					pile.add(0, Card);
+				}
+				if(two.getSize() == 0) { 
+					while(pile.getSize() != 0) {
+						one.add(one.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					return 0;
+				}
+				if(one.getSize() == 0) {
+					while(pile.getSize() != 0) {
+						two.add(two.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					return 1;
+				}
+			}
+		}
+		else { //game starts with player 2 going first
+			System.out.printf("Player Two goes first!\n\n");
+			System.out.printf("Round: %d\n", numberOfMatches + 1);
+			card firstCard = two.remove(1);
+			System.out.printf("Player Two puts down %s\n", firstCard);
+			pile.add(0, firstCard);
+			for(int i = 1; numberOfMatches < 10 || one.getSize() == 0 || two.getSize() == 0; i++) { //plays until 10 rounds played or either players hand hits 0
+				Card = one.remove(1);
+				System.out.printf("Player One puts down %s\n", Card);
+				if(Card.getSuit() == pile.get(1).getSuit()) {
+					System.out.printf("Player One wins round %d\n", numberOfMatches + 1);
+					pile.add(0, Card);
+					while(pile.getSize() != 0) {
+						one.add(one.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					numberOfMatches++; //increment matches
+					if(numberOfMatches < 10) {
+						System.out.printf("Round: %d\n", numberOfMatches + 1);
+						Card2 = two.remove(1);
+						System.out.printf("Player Two puts down %s\n", Card2);
+						pile.add(0, Card2);
+						continue;
+					}
+					else {
+						break;
+					}
+				}
+				else {
+					pile.add(0, Card);
+				}
+				if(two.getSize() == 0) { 
+					while(pile.getSize() != 0) {
+						one.add(one.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					return 0;
+				}
+				if(one.getSize() == 0) {
+					while(pile.getSize() != 0) {
+						two.add(two.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					return 1;
+				}
+				Card2 = two.remove(1);
+				System.out.printf("Player Two puts down %s\n", Card2);
+				if(Card2.getSuit() == pile.get(1).getSuit()) {
+					System.out.printf("Player Two wins round %d\n", numberOfMatches + 1);
+					pile.add(0, Card2);
+					while(pile.getSize() != 0) {
+						two.add(two.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					numberOfMatches++; //increment matches
+					if(numberOfMatches < 10) {
+						System.out.printf("Round: %d\n", numberOfMatches + 1);
+						Card2 = two.remove(1);
+						System.out.printf("Player Two puts down %s\n", Card2);
+						pile.add(0, Card2);
+						continue;
+					}
+					else {
+						break;
+					}
+				}
+				else {
+					pile.add(0, Card2);
+				}
+				if(two.getSize() == 0) { 
+					while(pile.getSize() != 0) {
+						one.add(one.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					return 0;
+				}
+				if(one.getSize() == 0) {
+					while(pile.getSize() != 0) {
+						two.add(two.getSize(), pile.remove(1));
+					}
+					System.out.printf("\nStat Tracking:\n");
+					System.out.printf("Player One has: %s cards\nPlayer Two has: %s cards\nPile has %s cards\n", one.getSize(),two.getSize(),pile.getSize());
+					System.out.printf("-----------------------------------------------------------------\n");
+					return 1;
+				}
+			}
+		}
+		//checks after matches and returns result of winner
+		if(one.getSize() > two.getSize()) {
+			return 0;
+		}
+		else if(one.getSize() < two.getSize()) {
+			return 1;
+		}
+		else{
+			return 2;
+		}
+	}
+	public static void printWinner(int result, singleLinkedList<card> one, singleLinkedList<card> two) {
+		if(result == 0) {
+			System.out.printf("Player One wins with %s cards while Player Two has %s\n", one.getSize(), two.getSize());
+		}
+		if(result == 1) {
+			System.out.printf("Player Two wins with %s cards while Player One has %s\n", two.getSize(), one.getSize());
+		}
+		if(result == 2) {
+			System.out.printf("Game tied!\n");
+		}
+	}
+
+}
