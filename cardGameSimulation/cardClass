@@ -1,0 +1,80 @@
+package cardGame;
+//class modeled after http://math.hws.edu/eck/cs124/javanotes3/source/Card.java
+public class card {
+	//make suits
+	public final static int Spades = 0;
+	public final static int Clubs = 1;
+	public final static int Diamonds = 2;
+	public final static int Hearts = 3;
+	//make Jack Queen King ACE
+	public final static int Ace = 1;
+	public final static int Jack = 11;
+	public final static int Queen = 12;
+	public final static int King = 13;
+	//private variables for class
+	private int suit;
+	private int value;
+	
+	//Constructor
+	public card(int suit, int value) {
+		this.value = value;
+		this.suit = suit;
+	}
+	
+	//get methods
+	public String getSuit() {
+		//converts the number put into suit to a string for respective suit
+		switch(suit) {
+		case 0:
+			return "Spades";
+		case 1:
+			return "Clubs";
+		case 2:
+			return "Diamonds";
+		case 3:
+			return "Hearts";
+		default:
+			return "No suit found\n";
+		}
+	}
+	
+	public String getValue() {
+		//returns value as a string in the case of Ace, Jack, Queen, King
+		switch(value) {
+		case 1:
+			return "Ace";
+		case 2:
+			return "2";
+		case 3:
+			return "3";
+		case 4:
+			return "4";
+		case 5:
+			return "5";
+		case 6:
+			return "6";
+		case 7:
+			return "7";
+		case 8:
+			return "8";
+		case 9:
+			return "9";
+		case 10:
+			return "10";
+		case 11:
+			return "Jack";
+		case 12:
+			return "Queen";
+		case 13:
+			return "King";
+		default:
+			return "No value found\n";
+		}
+	}
+	
+	//toString method
+	public String toString() {
+		String s = getValue() + " of " + getSuit();
+		return s;
+	}
+}
