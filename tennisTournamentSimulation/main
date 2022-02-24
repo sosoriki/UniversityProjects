@@ -1,0 +1,159 @@
+package tennisTournament;
+import java.util.*;
+public class simulationMain {
+	public static void main(String[] args){
+		String[][] playersAndRanks = new String[8][2];
+		addNames(playersAndRanks);
+		addRanks(playersAndRanks);
+		shuffleRanks(playersAndRanks);
+		System.out.printf("Ranking of Players as Follows:\n\n");
+		print(playersAndRanks);
+		sort(playersAndRanks);
+		System.out.printf("Ranking of Players Sorted:\n\n");
+		print(playersAndRanks);
+		int i = 0;
+		String[][] semiFinalists = matches(playersAndRanks, i);
+		sort(semiFinalists);
+		i++;
+		String[][] finalists = matches(semiFinalists, i);
+		sort(finalists);
+		i++;
+		finals(finalists, i);
+	}
+	public static void addNames(String[][] names) {
+		names[0][0] = "Bob";
+		names[1][0] = "Jess";
+		names[2][0] = "Danny";
+		names[3][0] = "Gil";
+		names[4][0] = "Nancy";
+		names[5][0] = "Lynn";
+		names[6][0] = "Peter";
+		names[7][0] = "Walter";
+	}
+	public static void addRanks(String[][] ranks) {
+		ranks[0][1] = "1";
+		ranks[1][1] = "2";
+		ranks[2][1] = "3";
+		ranks[3][1] = "4";
+		ranks[4][1] = "5";
+		ranks[5][1] = "6";
+		ranks[6][1] = "7";
+		ranks[7][1] = "8";
+	}
+	public static void shuffleRanks(String[][] shuffle) {
+		Random rand = new Random();
+		for(int i = 0; i < shuffle.length; i++) {
+			int position = rand.nextInt(shuffle.length); //gives random position to shuffle rank to name
+			String temp = shuffle[i][1];
+			shuffle[i][1] = shuffle[position][1];
+			shuffle[position][1] = temp;
+			//Shuffle method credit: https://www.programcreek.com/2012/02/java-method-to-shuffle-an-int-array-with-random-order/
+			//Shuffle method link above shows how to shuffle a 1-D array, adjusted it so it could shuffle the 2-D array
+		}
+	}
+	public static void print(String[][] playersAndRanks) {
+		for(int i = 0; i < playersAndRanks.length; i++) {
+			for(int j = 0; j < 2; j++) {
+				System.out.printf("Player %s", playersAndRanks[i][j]);
+				j++;
+				System.out.printf(" is ranked %s\n", playersAndRanks[i][j]);
+			}
+		}
+		System.out.printf("\n");
+	}
+	public static void sort(String[][] playersAndRanks) {
+		for(int i = 0; i < playersAndRanks.length-1; i++) {
+			for(int j = 0; j < playersAndRanks.length-i-1; j++) {
+				if(Integer.parseInt(playersAndRanks[j][1]) > Integer.parseInt(playersAndRanks[j+1][1]))
+				{
+					String temp1 = playersAndRanks[j][0]; //first one sorts player name
+					String temp2 = playersAndRanks[j][1]; //second one sorts player rank
+					playersAndRanks[j][0] = playersAndRanks[j+1][0];
+					playersAndRanks[j][1] = playersAndRanks[j+1][1];
+					playersAndRanks[j+1][0] = temp1;
+					playersAndRanks[j+1][1] = temp2; 
+				}
+			}
+		}
+	}
+	public static String[][] matches(String[][] playersAndRanks, int match) { //testing start
+		int[] index = new int[playersAndRanks.length/2];
+		String[] matchName = new String [] {"Quarter-Finals", "Semi-Finals", "Finals"};
+		String[][] winners = new String[playersAndRanks.length/2][2];
+		System.out.printf("Order of Matches (%s):\n\n", matchName[match]);
+		displayMatches(playersAndRanks);
+		System.out.printf("\nResults of Matches (%s):\n\n", matchName[match]);
+		index = playMatches(playersAndRanks);
+		for(int i = 0; i < winners.length; i++) {
+			winners = winners(playersAndRanks, index);
+		}
+		match++; //used to say next match instead of current one
+		System.out.printf("Players moving onto %s:\n\n", matchName[match]);
+		for(int i = 0; i < winners.length; i++) {
+			System.out.printf("[%s] %s\n", winners[i][1], winners[i][0]);
+		}
+		System.out.printf("\n");
+		return winners;
+	}																				//testing ends
+	public static void finals(String[][] finalists, int match) {
+		int[] index = new int[1]; //used to display winner at end of method
+		String[] matchName = new String [] {"Quarter-Finals", "Semi-Finals", "Finals"};
+		System.out.printf("Order of Matches (%s):\n\n", matchName[match]);
+		displayMatches(finalists);
+		System.out.printf("\nResults of Matches (%s):\n\n", matchName[match]);
+		index = playMatches(finalists);
+		int i = index[0];
+		if(i == 0) //checks if index is 0, if it is then the first player of the sorted finalists array is the winner
+		{
+			System.out.printf("Winner: [%s] %s\n", finalists[0][0], finalists[0][1]);
+			System.out.printf("Runner-up: [%s] %s", finalists[1][0], finalists[1][1]);
+		}
+		else //if index isn't a 0, then it prints out as the 2nd finalist in the finalists array as the winner
+		{
+			System.out.printf("Winner: [%s] %s\n", finalists[1][0], finalists[1][1]);
+			System.out.printf("Runner-up: [%s] %s", finalists[0][0], finalists[0][1]);
+		}
+	}
+	public static void displayMatches(String[][] playersAndRanks) {
+		int j = playersAndRanks.length-1; //used to make k read the bottom half of the array upwards
+		for(int i = 0; i < playersAndRanks.length/2; i++) {
+			int k = j-i; //k reads bottom half of the array upwards
+			System.out.printf("[%s] %s Vs. [%s] %s\n", playersAndRanks[i][1], playersAndRanks[i][0], playersAndRanks[k][1], playersAndRanks[k][0]);
+		}
+	}
+	public static int[] playMatches(String[][] playersAndRanks) {
+		Random rand = new Random();
+		int[] index = new int[playersAndRanks.length/2]; //used to save index's that need to be removed after
+		int j = playersAndRanks.length-1; //used to make k read the bottom half of the array upwards
+		for(int i = 0; i < playersAndRanks.length/2; i++) {
+			int winner = rand.nextInt(2); //random generator, if 0 then higher seed player wins, if 1 then lower seed player wins
+			int k = j-i; //k reads bottom half of the array upwards
+			if(winner == 0)
+			{
+				System.out.printf("[%s] %s Vs. [%s] %s\n", playersAndRanks[i][1], playersAndRanks[i][0], playersAndRanks[k][1], playersAndRanks[k][0]);
+				System.out.printf("[%s] %s wins\n", playersAndRanks[i][1], playersAndRanks[i][0]);
+				index[i] = i;
+			}
+			else
+			{
+				System.out.printf("[%s] %s Vs. [%s] %s\n", playersAndRanks[i][1], playersAndRanks[i][0], playersAndRanks[k][1], playersAndRanks[k][0]);
+				System.out.printf("[%s] %s wins\n", playersAndRanks[k][1], playersAndRanks[k][0]);
+				index[i] = k;
+			}
+		}
+		System.out.printf("\n");
+		return index;
+	}
+	public static String[][] winners(String[][] playersAndRanks, int[] index) {
+		String[][] winners = new String [playersAndRanks.length/2][2];
+		for(int i = 0; i < winners.length; i++)
+		{
+			int j = index[i];
+			for (int k = 0; k < winners.length; k++){
+				winners[i][0] = playersAndRanks[j][0];
+				winners[i][1] = playersAndRanks[j][1];
+			}
+		}
+		return winners;
+	}
+}
