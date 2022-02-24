@@ -1,0 +1,167 @@
+package cardGame;
+
+public class singleLinkedList <E> implements bareBonesLinkedList <E>{
+	//since linked list is made up of nodes, we create inner private Node class here
+		private class node <F>{
+			//Data
+			private F data;
+			//Link
+			private node<F> next;
+			//Constructors: creates node with data and next link
+			public node(F data, node<F> next){
+				this.data = data;
+				this.next = next;
+			}
+			//Constructor that just creates data with no link
+			public node(F data){
+				this.data = data;
+				this.next = null;
+				//could also use - this(data, null);
+			}
+			
+		} //end of node class
+		
+		//Data for single link list
+		private node<E> head;		//this is the head of the linked list
+		private int size;			//this is how many nodes in the linked list
+		
+		//Constructors
+		public singleLinkedList(){
+			this.head = new node<E>(null); //the data of the head is null
+			this.size = 0; //no nodes yet
+			
+		}
+		@Override
+		public void add(int index, E item) {
+			//This method adds an element to the linked list, depending on index, either addFirst() or addAfter() is called
+			if (index < 0 || index > size){
+				System.out.printf("Invalid index.\n");
+				return;
+			}
+			else if(index == 0){
+				addFirst(item);
+			}
+			else{
+				node<E> node = getNode(index -1); //we need the node reference
+				addAfter(node, item);
+			}
+			
+		}
+		
+		private void addFirst(E item){
+			//we are creating a new node and pointing to it
+			node<E> temp = new node<E>(item, head.next);
+			head.next = temp;
+			size++;
+			
+		}
+		
+		private void addAfter(node<E> node, E item){
+			//similar logic as addFirst
+			node<E> temp = new node<E>(item, node.next);
+			node.next = temp;
+			size++;
+			
+		}
+		
+		private node<E> getNode(int index){
+			node<E> node = head; //copy reference from head
+			for(int i = 0; i< index && node != null; i++){
+				node = node.next;
+			}
+			return node;
+			
+		}
+
+		@Override
+		public E remove(int index) {
+			//Method deleted elements from linkedlist
+			//based on index use removedFirst() or removedAfter()
+			//First check if index is valid
+			if(index < 0 || index > size){
+				System.out.printf("Invalid index!\n");
+				return null;
+			}
+			else if (index == 0){
+				return removeFirst();
+			}
+			else{
+				node<E> node = getNode(index - 1);
+				return removeAfter(node);
+			}
+			
+		}
+		
+		private E removeFirst(){
+			//Change head node (if applicable) then return deleted data
+			node<E> temp = head.next;	//another reference
+			if(head == null){
+				return null;
+			}
+			if(head.next == null){
+				System.out.printf("List is empty, nothing to remove\n");
+				return null;
+			}
+			else{
+				head.next = head.next.next;
+				size--;
+				return temp.data;
+			}
+		}
+		
+		private E removeAfter(node<E> node){
+			node<E> temp = node.next;
+			if(node.next == null){
+				System.out.printf("Nothing to remove\n");
+				return null;
+			}
+			else{
+				node.next = node.next.next;
+				size--;
+				return temp.data;
+			}
+		}
+
+		@Override
+		public E get(int index) {
+			if(index < 0 || index > size) {
+				System.out.printf("Index does not exist\n");
+				return null;
+			}
+			else {
+				node<E> node = getNode(index);
+				return node.data;
+			}
+		}
+
+		@Override
+		public void set(int index, E newValue) {
+			if(index < 0 || index > size) {
+				System.out.printf("Index does not exist\n");
+				return;
+			}
+			else {
+				node<E> node = getNode(index);
+				node.data = newValue;
+				return;
+			}
+			
+		}
+
+		@Override
+		public int getSize() {
+			return this.size;
+		}
+		
+		public String toString(){
+			String s = "[";
+			node<E> p = head;
+			while(p.next != null){
+				s += p.next.data + "-->";
+				p = p.next;
+			}//while there are nodes, add the data
+			s += "]";
+			return s;
+		}
+
+}
