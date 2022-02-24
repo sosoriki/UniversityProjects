@@ -1,0 +1,80 @@
+package cfgSimplification;
+import java.util.*;
+import java.io.BufferedReader;
+public class driver {
+
+	public static void main(String[] args) throws Exception{
+
+		Scanner scn = new Scanner(System.in);
+		String input = ""; 
+		String file = ("Test_2.txt"); //change this to read other files
+		BufferedReader br = utility.openFile(file);
+		String states;
+		ArrayList<String> checked = new ArrayList<>();
+		input += "V: ";
+		while((states = utility.readLine(br)) != null) {
+			for(char letter: states.toCharArray()) {
+				if(Character.isUpperCase(letter)) {
+					if(!checked.contains(Character.toString(letter))) {
+						input += letter;
+						input += ",";
+					}
+				}
+				checked.add(Character.toString(letter));
+			}
+		}
+		br = utility.openFile(file);
+		checked.clear();
+		String terminals;
+		input += "\n";
+		input += "T: ";
+		while((terminals = utility.readLine(br)) != null) {
+			for(char letter: terminals.toCharArray()) {
+				if(Character.isLowerCase(letter)) {
+					if(!checked.contains(Character.toString(letter))) {
+						input += letter;
+						input += ",";
+					}
+				}
+				checked.add(Character.toString(letter));
+			}
+		}
+		input += "\n";
+		input += "S: S";
+		input += "\n";
+		input += "P: ";
+		br = utility.openFile(file);
+		checked.clear();
+		String grammar;
+		input += "\n";
+		while ((grammar = utility.readLine(br)) != null) {
+			for(char letter: grammar.toCharArray()) {
+				input += letter;
+			}
+			input += "\n";
+		}
+		System.out.printf("Input from File: \n\n");
+		System.out.println(input);
+
+		try {
+			grammar parsedGrammar = new parse().parseGrammar(input);
+			
+			if (parsedGrammar != null) {
+				simplify Sg = new simplify();
+				grammar simplifiedGrammar = Sg.simplify(parsedGrammar);
+				System.out.println("Simplified rules : \n");
+				System.out.println(simplifiedGrammar.toString());
+
+			} 
+			else {
+				System.out.println("Error, Check grammar");
+			}
+
+		}
+		catch (Exception exp) {
+			System.out.println("Exception Error");
+		}
+		scn.close();
+	}
+	
+}
