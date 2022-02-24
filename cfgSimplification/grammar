@@ -1,0 +1,80 @@
+package cfgSimplification;
+import java.util.ArrayList;
+import java.util.List;
+
+public class grammar {
+
+	private List<state> states;
+	private List<Character> terminals;
+	private state start;
+
+	public List<state> get() {
+		return states;
+		}
+
+	public void set(List<state> states) {
+		this.states = states;
+		}
+
+	public List<state> remove(state remove){
+		states.remove(remove);
+		return states;
+		}
+	
+	public List<Character> getTerminals() {
+		return terminals;
+		}
+
+	public void setTerminals(List<Character> terminals) {
+		this.terminals = terminals;
+	}
+
+	public state getStartState() {
+		return start;
+	}
+
+	public void setStartState(state startState) {
+		this.start = startState;
+	}
+
+	public state getStateName(char stateName) {
+		for (state state: states) {
+			if (state.getNonTerminal() == stateName) {
+				return state;
+			}
+		}
+		return null;
+	}
+
+	public void removeEmptyStates() {
+		if (!states.isEmpty()) {
+			for (int i = 0; i < states.size(); i++) {
+				if (states.get(i).getList().isEmpty()) {
+					states.remove(i);
+				}
+			}
+		}
+		else {
+			System.out.println("There is no state in this grammar!");
+		}
+	}
+
+	@Override
+	public String toString() {
+		String s = "";
+		for (state state: states) {
+			s += state.getNonTerminal() + ": ";
+			ArrayList<String> derivations = (ArrayList<String>) state.getList();
+			for (String derivation: derivations) {
+				s += derivation;
+
+				if (!(derivations.indexOf(derivation) == (derivations.size()-1))) {
+					s += "|";
+				}
+			}
+
+			s += "\n";
+		}
+		return s;
+	}
+}
