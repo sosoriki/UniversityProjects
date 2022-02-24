@@ -1,0 +1,15 @@
+package cardGame;
+
+public interface bareBonesLinkedList <E> {
+		//add element to linked list at specific index
+		public void add(int index, E item);
+		//remove an elemeny from linked list at specific index
+		public E remove(int index);
+		//get the data from node at an index
+		public E get(int index);
+		//update value at node given by index
+		public void set(int index, E newValue);
+		//get the number of nodes in linked list
+		public int getSize();
+
+}
