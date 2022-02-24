@@ -1,0 +1,13 @@
+package breadthFirstSearch;	
+
+public class node <F>{
+	public F data;				//data
+	public node<F> next;		//link
+	public node<F> prev;		//link backwards
+	public node(F data) {		//constructor
+		this.data = data;
+		this.next = null;
+		this.prev = null;
+	}
+
+}
