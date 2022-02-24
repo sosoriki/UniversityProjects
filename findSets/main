@@ -1,0 +1,134 @@
+package Assignment2;
+import java.util.*;
+public class A2 {
+	public static Scanner input = new Scanner(System.in);
+	public static void main (String[] args)
+	{
+		int[] subA;
+		int[] subB;
+		ArrayList<Integer> compB = new ArrayList<Integer>();
+		ArrayList<Integer> intersection = new ArrayList<Integer>();
+		int i = 0;
+		int j = 0;
+		int k = 0;
+		int number;
+		int sizeA;
+		int sizeB;
+		System.out.printf("Please enter the size of subset A\n");
+		sizeA = input.nextInt();
+		subA = new int[sizeA];
+		System.out.printf("Please enter unique elements for subset A\n");
+		for(i = 0; i < subA.length; i++)
+		{
+			number = input.nextInt();
+			for(i = 0; i < j; i++)
+			{
+				if(number == subA[i])
+				{
+					System.out.printf("Element already exists! Please reenter a unique element\n");
+					number = input.nextInt();
+				}
+			}
+			subA[i] = number;
+			j++;
+		}
+		System.out.printf("Set A: {");
+		System.out.printf("%d", subA[0]);
+		for(i = 1; i < subA.length; i++)
+		{
+			System.out.printf(",%d", subA[i]);
+		}
+		System.out.printf("}\n");
+		System.out.printf("================================================\n");
+		System.out.printf("Please enter the size of subset B\n");
+		sizeB = input.nextInt();
+		subB = new int[sizeB];
+		System.out.printf("Please enter unique elements for subset B\n");
+		for(i = 0; i < subB.length; i++)
+		{
+			number = input.nextInt();
+			for(i = 0; i < k; i++)
+			{
+				if(number == subB[i])
+				{
+					System.out.printf("Element already exists! Please reenter a unique element\n");
+					number = input.nextInt();
+				}
+			}
+			subB[i] = number;
+			k++;
+		}
+		System.out.printf("Set B: {");
+		System.out.printf("%d", subB[0]);
+		for(i = 1; i < subB.length; i++)
+		{
+			System.out.printf(",%d", subB[i]);
+		}
+		System.out.printf("}\n");
+		System.out.printf("================================================\n");
+		HashSet<Integer> hash = new HashSet<>();
+		for(i = 0; i < subA.length; i++)
+		{
+			hash.add(subA[i]);
+		}
+		for(i = 0; i < subB.length; i++)
+		{
+			hash.add(subB[i]);
+		}
+		String print = hash.toString().replace("[", "{").replace("]","}").replace(" ", "");
+		System.out.printf("Union of Set A and B: %s\n", print);
+		i = 0;
+		j = 0;
+		System.out.printf("Intersection of set A and B: {");
+		while(i < sizeA && j < sizeB)
+		{
+			if(subA[i] > subB[j])
+			{
+				j++;
+			}
+			else if (subB[j] > subA[i])
+			{
+				i++;
+			}
+			else
+			{
+				System.out.printf("%d,", subA[i]);
+				intersection.add(subA[i]);
+				i++;
+				j++;
+			}
+		}
+		System.out.printf("}\n");
+		System.out.printf("Set B's Compliment: {");
+		for(i = 0; i < 10; i++)
+		{
+			compB.add(i);
+		}
+		for(i = 0; i < compB.size(); i++)
+		{
+			for(j = 0; j < subB.length; j++)
+			{
+				if(compB.get(i) == subB[j])
+				{
+					compB.remove(i);
+				}
+			}
+		}
+		for (i = 0; i < compB.size(); i++)
+		{
+			System.out.printf("%d,", compB.get(i));
+		}
+		System.out.printf("}\n");
+		System.out.printf("Production of Intersection of set A and B and A: {");
+		for(i = 0; i < intersection.size(); i++)
+		{
+			for(j = 0; j < subA.length; j++)
+			{
+				System.out.printf("(%d,%d),", intersection.get(i), subA[j]);
+			}
+		}
+		System.out.printf("}\n");
+		
+	}
+
+}
