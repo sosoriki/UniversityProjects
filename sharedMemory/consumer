@@ -1,0 +1,20 @@
+package sharedMemory;
+import java.io.*;
+import java.util.*;
+import java.nio.channels.*; // https://docs.oracle.com/javase/7/docs/api/java/nio/channels/FileChannel.html
+import java.nio.file.*; // https://docs.oracle.com/javase/7/docs/api/java/nio/file/StandardOpenOption.html
+import java.nio.*; // https://docs.oracle.com/javase/7/docs/api/java/nio/MappedByteBuffer.html
+import java.nio.channels.FileChannel.*; // https://docs.oracle.com/javase/7/docs/api/java/nio/channels/FileChannel.MapMode.html
+public class consumer {
+	public static final String shared_name = "OS";
+    public static final int SIZE = 512;
+
+    public static void main( String[] args ) throws java.io.IOException {
+        File shmem = new File( shared_name );
+        FileChannel channel = FileChannel.open(shmem.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+        MappedByteBuffer mBB = channel.map(MapMode.READ_WRITE, 0, SIZE);
+        CharBuffer cBuffer = mBB.asCharBuffer();
+        char c;
+        while((c = cBuffer.get()) != 0) {
+        	System.out.print(c);
+        }
