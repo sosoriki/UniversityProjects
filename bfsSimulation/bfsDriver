@@ -1,0 +1,119 @@
+package breadthFirstSearch;																		
+import java.io.*;
+import java.util.*;
+public class bfsTest {
+	static Scanner input = new Scanner(System.in);
+	public static void main (String[] args) throws FileNotFoundException {
+		ArrayList<doublyLinkedList> adj = new ArrayList<doublyLinkedList>();					//makes array of type doublyLinkedList so I can add doubly linked lists to the array
+		int v = readFile(adj);
+		System.out.printf("\n---Adjacency List---\n\n");
+		printList(adj);
+		System.out.printf("\nSelect the starting node: ");
+		ArrayList<doublyLinkedList> bfsTree = bfs(adj, v);
+		System.out.printf("\n\n ***End of Program***");
+	}
+	
+	public static int readFile(ArrayList<doublyLinkedList> adj) throws FileNotFoundException {
+		int v = 0;
+		int e = 0;
+		int node = 0;																			//used to give node and e for given edge
+		System.out.printf("Input File: ");
+		String newFile = input.nextLine();
+		File file = new File(newFile);
+		if(file.exists()) {
+			System.out.printf("\n---Graph Representation---\n\n");
+			v = checkVerticies(newFile);
+			createGraph(adj, v);
+			Scanner fileReader = new Scanner(file);
+			while(fileReader.hasNextInt()) {		
+				int edge = fileReader.nextInt();												//when it comes back to top of while, will add the next integer into edge variable to check it
+				if(edge == 1) {																	//prints 1 and adds node to the adjacency list
+					System.out.printf("1 ");
+					addEdge(adj, node, e);
+					e++;
+				}
+				else {																			//prints 0 and moves onto next node
+					System.out.printf("0 ");
+					e++;
+				}
+				if(e == v) {																	//checks if we have looked at every node on the graph to move down to the next node
+					System.out.printf("\n");													
+					e = 0;																		//resets edge to add into adjacency list
+					node++;																		//moving on to next node
+				}
+			}
+			System.out.printf("\nNumber of Nodes in the graph: %d\n", v);
+			fileReader.close();
+		}
+		else {
+			System.out.printf("File does not exist.\n");
+			System.exit(0);
+		}
+		return v;																				//returning number of vertices on the graph for bfs search
+	}
+	
+	public static ArrayList bfs(ArrayList<doublyLinkedList> adj, int v) {						
+		int s = input.nextInt();																//starting node
+		boolean discovered[] = new boolean[v];
+		ArrayList<doublyLinkedList> bfsTree = new ArrayList<doublyLinkedList>();				//current bfs tree that will be returned, will be using arraylist element as layer and in that element as child
+		createGraph(bfsTree, v);
+		doublyLinkedList queue = new doublyLinkedList();
+		queue.addEnd(s);																		//adding this to the queue so that we can use it as the first element to bfs from
+		discovered[s] = true;																	//sets node that we are starting from to be true
+		int u = 0;																				//my iterator through the adj list
+		System.out.printf("\n\n---Bfs Tree---\n\n");
+		System.out.printf("Parent:Child\n");
+		while(!queue.isEmpty()) {																//using the queue to iterate through
+			s = queue.removeFirst();															//using the first element in the queue to check it's adj list
+			System.out.printf("Node %d: ", s);													//printing out parents node
+			int x = adj.get(s).getSize();														//getting the size of the element in the array list, how many nodes in the adj list at that element
+			while(u < x) {																		//using the x to iterate through all the elements in the list
+				int n = adj.get(s).get(u);														//grabbing n as the element s in the arraylist at node u in the adjacency list
+				if(!discovered[n]) {															//if the n is not true in the discovered array, as in we found it, we set it to true
+					System.out.printf("%d ", n);												//printing when child is discovered
+					discovered[n] = true;
+					queue.addEnd(n);															//adding what we just found to queue to check it's adjacencies later and adding it to the bfsTree
+					addEdge(bfsTree, s, n);
+				}
+				u++;																			//incrementing my iterator for the adj list
+			}
+			System.out.printf("\n");															//line between parents
+			u = 0;																				//reseting my iterator for the adj list
+		}
+		return bfsTree;																			//return bfs tree for later use if I wanted
+	}
+
+	public static int checkVerticies(String newFile) throws FileNotFoundException {				//checks for number of vertices
+		int v = 0;																				//variable returned to show how many vertices
+		File file = new File(newFile);
+		Scanner reader = new Scanner(file);
+		while(reader.hasNextLine()){
+			v++;
+			reader.nextLine();																	//iterates to next line to keep checking for vertices
+		}
+		reader.close();
+		return v;
+	}
+	
+	public static void createGraph(ArrayList<doublyLinkedList> adj, int v) {					//putting doubly linked lists into the array list depending on number of vertices
+		for(int i = 0; i < v; i++) {
+			adj.add(i, new doublyLinkedList());
+		}
+	}
+	
+	public static void addEdge(ArrayList<doublyLinkedList> adj, int node, int e) {				//adding edges to the adjacency list at point node we add what node connects to e
+		adj.get(node).addEnd(e);
+	}
+	
+	public static void printList(ArrayList<doublyLinkedList> adj) {								//prints out adjacency list
+		for(int i = 0; i < adj.size(); i++) {
+			System.out.printf("Node %d: ", i);
+			for(int j = 0; j < adj.get(i).getSize(); j++) {
+				System.out.printf("%d ", adj.get(i).get(j));
+			}
+			System.out.printf("\n");
+		}
+	}
+
+}
+
