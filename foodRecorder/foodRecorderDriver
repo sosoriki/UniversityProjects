@@ -1,0 +1,280 @@
+package foodCalorie;
+import java.util.*;
+public class foodCalorieDriver {
+	public static void main(String args[]) {
+		//The existing user account
+		String user = "Admin";
+		String pass = "12345678";
+		//Create stack with food object
+		arrayStack <food> foodStack = new arrayStack<>(99);
+		int attempt = 2;
+		Scanner input = new Scanner(System.in);
+		int choice = 1;
+		int lock = 1;
+		while(lock == 1) {
+			System.out.printf("1. Register client and create login\n");
+			System.out.printf("2. Login existing client\n");
+			choice = input.nextInt();
+			switch(choice) {
+			case 1:
+				System.out.printf("First name: ");
+				String firstName = input.next();
+				System.out.printf("Last name: ");
+				String lastName = input.next();
+				for(int i = 0; i < attempt; i++) {
+					System.out.printf("Enter a username: ");
+					String userE = input.next();
+					System.out.printf("Enter a password: ");
+					String passE = input.next();
+					if(passE.length() < 8 && i < 2) {
+						System.out.printf("Please try again\n");
+					}
+					else {
+						System.out.printf("User created\n");
+						i++;
+						lock = 0;
+					}
+					if(passE.length() < 8 && i == 2) {
+						System.out.printf("Random User ID and Password created\n");
+					}
+				}
+				if(lock == 1) {
+					int number = new Random().nextInt((100 - 1) + 1 + 1);
+					String createdUser = lastName + firstName + number;
+					String charL = "abcdefghijklmnopqrstuvwxyz";
+					String charU = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+					String digits = "0123456789";
+					String createdPass = "";
+					for(int i = 0; i < 8; i++) {
+						int randomChar = new Random().nextInt((3 - 1) + 1 + 1);
+						switch(randomChar) {
+						case 1:
+							int randomLower = new Random().nextInt(charL.length());
+							String lower = String.valueOf(charL.charAt(randomLower));
+							createdPass = createdPass + lower;
+						case 2:
+							int randomUpper = new Random().nextInt(charU.length());
+							String upper = String.valueOf(charU.charAt(randomUpper));
+							createdPass = createdPass + upper;
+						case 3:
+							int randomDigit = new Random().nextInt(digits.length());
+							String dig = String.valueOf(digits.charAt(randomDigit));
+							createdPass = createdPass + dig;
+						}
+					}
+					System.out.printf("Created Username: %s\n", createdUser);
+					System.out.printf("Created Password: %s\n", createdPass);
+					lock = 0;
+				}
+				break;
+			case 2:
+				System.out.printf("Username: ");
+				String userE = input.next();
+				System.out.printf("Password: ");
+				String passE = input.next();
+				if(userE.equals(user) && passE.equals(pass)) {
+					System.out.printf("Welcome\n");
+					lock = 0;
+				}
+				else {
+					System.out.printf("Incorrect Username or Password. Please restart program and try again.");
+					System.exit(0);
+				}
+				break;
+			}
+		}
+		while(true) {	//Menu loop code from: https://stackoverflow.com/questions/34928182/how-to-make-a-java-main-menu-loop-after-using-a-case/34928407
+			System.out.printf("Food and Calorie Client Menu\n\n");
+			System.out.printf("3. Add food item\n");
+			System.out.printf("4. Food ate in a day in reverse order\n");
+			System.out.printf("5. Check all food items ate in a day\n");
+			System.out.printf("6. Total calories eaten\n");
+			System.out.printf("7. List all food items from minimum to maximum calories\n");
+			System.out.printf("8. Food that was eaten most in a day\n");
+			System.out.printf("9. Logout\n");
+			choice = input.nextInt();
+			switch(choice) {
+			case 3:
+				for(int i = 0; i < 1; i++) {
+					System.out.printf("Enter food name (use underscore for spaces): ");
+					String name = input.next();
+					System.out.printf("Enter how much eaten: ");
+					int quanity = input.nextInt();
+					System.out.printf("Enter calories: ");
+					int calories = input.nextInt();
+					System.out.printf("Enter 1 for Breakfast, 2 for Lunch, 3 for Dinner, 4 for Snack, or 5 for Drink: ");
+					int type = input.nextInt();
+					food Food = new food(name, quanity, calories, type);
+					foodStack.push(Food);
+					System.out.printf("Enter 1 to add another food item and any other number to move on.\n");
+					int addFood = input.nextInt();
+					if(addFood == 1) {
+						i--;
+					}
+				}
+				break;
+			case 4:
+				arrayStack<food> tempStack = new arrayStack<>(99);
+				System.out.printf("Food ate printed in reverse order: \n");
+				while(!foodStack.isEmpty()) {
+					food foodTemp = foodStack.pop();
+					System.out.printf("%s, ", foodTemp.getFoodName());
+					tempStack.push(foodTemp);
+				}
+				while(!tempStack.isEmpty()) {	//put it back in in right order after finish
+					food foodTemp = tempStack.pop();
+					foodStack.push(foodTemp);
+				}
+				System.out.printf("\n\n");
+				break;
+			case 5:
+				findMostEaten(foodStack);
+				break;
+			case 6:
+				arrayStack<food> calorieStack = new arrayStack<>(99);
+				int calories = 0;
+				while(!foodStack.isEmpty()) {
+					food foodTemp = foodStack.pop();
+					calories = calories + foodTemp.getCalories();
+					calorieStack.push(foodTemp);
+				}
+				while(!calorieStack.isEmpty()) {	//put it back in in right order after finish
+					food foodTemp = calorieStack.pop();
+					foodStack.push(foodTemp);
+				}
+				System.out.printf("You have eaten %d calories\n\n", calories);
+				break;
+			case 7:
+				arrayStack<food> sortStack = new arrayStack<>(99);
+				arrayStack<food> fixStack = new arrayStack<>(99);	//so we can put it back regularly on the stack
+				while(!foodStack.isEmpty()) {
+					food foodTemp = foodStack.pop();
+					sortStack.push(foodTemp);
+					fixStack.push(foodTemp);
+				}
+				while(!fixStack.isEmpty()) {
+					food foodTemp = fixStack.pop();
+					foodStack.push(foodTemp);
+				}
+				arrayStack<food> sortedStack = sortStackMethod(sortStack);
+				System.out.printf("Foods eaten in ascending order: ");
+				while(!sortedStack.isEmpty()) {
+					food printFood = sortedStack.pop();
+					String print = printFood.getFoodName();
+					System.out.printf("%s, ", print);
+				}
+				System.out.printf("\n\n");
+				break;
+			case 8:
+				int count1 = 0;
+				int count2 = 0;
+				int count3 = 0;
+				int count4 = 0;
+				int count5 = 0;
+				arrayStack<food> resetStack = new arrayStack<>(99);
+				while(!foodStack.isEmpty()) {
+					food foodType = foodStack.pop();
+					resetStack.push(foodType);
+					switch(foodType.getMealType()) {
+					case 1:
+						count1++;
+						break;
+					case 2:
+						count2++;
+						break;
+					case 3:
+						count3++;
+						break;
+					case 4:
+						count4++;
+						break;
+					case 5:
+						count5++;
+						break;
+					default:
+						System.out.printf("Not a valid meal type\n");
+						break;
+					}
+				}
+				while(!resetStack.isEmpty()) {	//re-sorts it back
+					food tempSwitch = resetStack.pop();
+					foodStack.push(tempSwitch);
+				}
+				System.out.printf("Types of food eaten: ");
+				if(count1 > 0) {
+					System.out.printf("Breakfast\n");
+				}
+				if(count2 > 0) {
+					System.out.printf("Lunch\n");
+				}
+				if(count3 > 0) {
+					System.out.printf("Dinner\n");
+				}
+				if(count4 > 0) {
+					System.out.printf("Snack\n");
+				}
+				if(count5 > 0) {
+					System.out.printf("Drink\n");
+				}
+				break;
+			case 9:
+				System.out.printf("Thank you. Logging out...\n");
+				System.exit(0);
+				break;
+			default:
+				System.out.printf("Not a valid choice. Please select a valid choice!\n");
+				break;
+			}
+		}
+	}
+	
+	public static arrayStack<food> sortStackMethod(arrayStack<food> stack) {	//Used similar code from: https://www.geeksforgeeks.org/sort-stack-using-temporary-stack/
+		arrayStack<food> tempStack = new arrayStack<>(99);
+		while(!stack.isEmpty()) {
+			food tempFood = stack.pop();
+			int temp = tempFood.getCalories();
+			while(!tempStack.isEmpty() && tempStack.peek().getCalories() > temp) {
+				stack.push(tempStack.pop());
+			}
+			tempStack.push(tempFood);
+		}
+		while(!tempStack.isEmpty()) {	//re-sorts it back
+			food tempSwitch = tempStack.pop();
+			stack.push(tempSwitch);
+		}
+		return stack;
+	}
+	
+	public static void findMostEaten(arrayStack<food> stack) {
+		arrayStack<food> valueStorage = new arrayStack<>(99);
+		arrayStack<food> secondStack = new arrayStack<>(99);
+		food tempFood = stack.pop();
+		valueStorage.push(tempFood);
+		secondStack.push(tempFood);
+		while(!stack.isEmpty()) {
+			tempFood = stack.pop();
+			if(tempFood.getQuanity() > valueStorage.peek().getQuanity()) {
+				secondStack.push(tempFood);
+				valueStorage.pop();
+				valueStorage.push(tempFood);
+			}
+			else if(tempFood.getQuanity() == valueStorage.peek().getQuanity()) {
+				secondStack.push(tempFood);
+				valueStorage.push(tempFood);
+			}
+			else {
+				secondStack.push(tempFood);
+			}
+		}
+		while(!secondStack.isEmpty()) {	//re-sorts it back
+			food tempSwitch = secondStack.pop();
+			stack.push(tempSwitch);
+		}
+		System.out.printf("Food most eaten: \n");
+		while(!valueStorage.isEmpty()) {
+			food printFood = valueStorage.pop();
+			System.out.printf("%s with %d quanity\n", printFood.getFoodName(), printFood.getQuanity());
+		}
+	}
+
+}
